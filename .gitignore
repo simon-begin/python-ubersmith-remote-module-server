@@ -1,0 +1,4 @@
+.tox
+AUTHORS
+ChangeLog
+*.egg-info
