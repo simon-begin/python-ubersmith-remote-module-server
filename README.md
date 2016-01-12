@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/mat128/pyubwebhook.svg)](https://travis-ci.org/mat128/pyubwebhook)
 
 pyubwebhook
 ===========
