@@ -16,7 +16,7 @@ Offer an easy way to write device, order and service modules, in python, with as
 Vision
 ======
 
-A remote "hello world" device module would fit under 20 lines.
+A remote "hello world" device module should fit under 20 lines.
 
 
 Values
