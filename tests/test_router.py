@@ -18,30 +18,50 @@ import mock
 from pyubwebhook.router import Router
 
 
+class Module3(object):
+    def ab(self):
+        pass
+
+    def cd(self):
+        pass
+
+
 class RouterTest(unittest.TestCase):
     def setUp(self):
-        self.instance = mock.Mock()
-        self.instance.my_method_name.return_value = 'yes'
+        self.module1 = mock.Mock()
+        self.module1.my_method_name.return_value = 'yes'
+        self.module2 = mock.Mock()
+        self.module2.hello.return_value = 'world'
+        self.module3 = Module3()
 
-        self.basic_router = Router(self.instance)
-        self.router = Router(self.instance, env_as_kwarg=True)
+        self.modules = {'module1': self.module1,
+                        'module2': self.module2,
+                        'module3': self.module3}
+
+        self.basic_router = Router(self.modules, env_as_kwarg=False)
+        self.router = Router(self.modules)
 
     def test_basic_mode(self):
-        payload = {'method': 'my_method_name',
-                   'params': {'param1': 'value1', 'param2': 'value2'}}
+        result = self.basic_router.invoke_method(module_name='module1', method='my_method_name',
+                                                 params=['value1', 'value2'])
 
-        result = self.basic_router.route(payload)
-
-        self.instance.my_method_name.assert_called_with(param1='value1', param2='value2')
+        self.module1.my_method_name.assert_called_with('value1', 'value2')
         assert_that(result, is_('yes'))
 
     def test_env_is_optionally_passed_as_keyword_argument_in_every_call(self):
-        payload = {'method': 'my_method_name',
-                   'params': {'param1': 'value1', 'param2': 'value2'},
-                   'env': {'local_variable1': 'value1', 'local_variable2': 'value2'}}
+        result = self.router.invoke_method(module_name='module2', method='hello',
+                                           params=['value1', 'value2'],
+                                           env={'local_variable1': 'value1', 'local_variable2': 'value2'})
 
-        result = self.router.route(payload)
+        self.module2.hello.assert_called_with('value1', 'value2',
+                                              env={'local_variable1': 'value1', 'local_variable2': 'value2'})
+        assert_that(result, is_('world'))
 
-        self.instance.my_method_name.assert_called_with(env={'local_variable1': 'value1', 'local_variable2': 'value2'},
-                                                      param1='value1', param2='value2')
-        assert_that(result, is_('yes'))
+    def test_list_implemented_methods(self):
+        result = self.router.list_implemented_methods('module3')
+
+        assert_that(result, is_(['ab', 'cd']))
+
+    def test_accept_callback_as_kwarg(self):
+        self.router.invoke_method(module_name='module1', method='hello', params=[], env={},
+                                  callback={'url': 'http://example.net', 'params': {'k1': 'v1', 'k2': 'v2'}})

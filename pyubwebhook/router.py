@@ -13,13 +13,24 @@
 # limitations under the License.
 
 class Router(object):
-
-    def __init__(self, instance, env_as_kwarg=False):
-        self.instance = instance
+    def __init__(self, modules, env_as_kwarg=True):
+        self.modules = modules
         self.env_as_kwarg = env_as_kwarg
 
-    def route(self, payload):
+    def invoke_method(self, module_name, method, params=None, env=None, callback=None):
+        if params is None:
+            params = []
+        if env is None:
+            env = {}
+
         if self.env_as_kwarg:
-            return getattr(self.instance, payload['method'])(env=payload['env'], **payload['params'])
+            additional_kwargs = {'env': env}
         else:
-            return getattr(self.instance, payload['method'])(**payload['params'])
+            additional_kwargs = {}
+
+        module = self.modules[module_name]
+        return getattr(module, method)(*params, **additional_kwargs)
+
+    def list_implemented_methods(self, module_name):
+        module = self.modules[module_name]
+        return [method for method in dir(module) if callable(getattr(module, method)) and not method.startswith('__')]

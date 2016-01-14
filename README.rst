@@ -24,8 +24,21 @@ Values
 
 * Everything should be tested and easy to understand.
 
+
+Example
+=======
+
+>>> from pyubwebhook import server
+>>> class MyDeviceModule(object):
+...   def hello(self, env):
+...     return "world"
+...
+>>> s = server.Server({'my_device_module': MyDeviceModule()})
+>>> s.run()
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+
+
 TODOs
 =====
 
-* Callbacks
-* Offer ability to wrap multiple modules in a Flask server
+* Callbacks (a.k.a. remote invocation of internal Ubersmith methods using the callback endpoint)
