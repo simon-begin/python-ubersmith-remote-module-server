@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/mat128/pyubwebhook.svg)](https://travis-ci.org/mat128/pyubwebhook)
+.. image:: https://travis-ci.org/mat128/pyubwebhook.svg?branch=master
+    :target: https://travis-ci.org/mat128/pyubwebhook
 
 pyubwebhook
 ===========
