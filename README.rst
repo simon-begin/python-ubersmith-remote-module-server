@@ -1,11 +1,11 @@
-.. image:: https://travis-ci.org/mat128/pyubwebhook.svg?branch=master
-    :target: https://travis-ci.org/mat128/pyubwebhook
+.. image:: https://travis-ci.org/mat128/python-ubersmith-remote-module-server.svg?branch=master
+    :target: https://travis-ci.org/mat128/python-ubersmith-remote-module-server
 
-pyubwebhook
-===========
+ubersmith-remote-module-server
+==============================
 
 Standardizing on the proposed ubersmith webhook format (method, params, env and callback),
-this aims to be a wrapper for any python instance. This should allow any object to be a ubersmith webhook.
+this aims to be an easy way to serve any python object as a Übersmith remote module.
 
 
 Mission
@@ -29,7 +29,7 @@ Values
 Example
 =======
 
->>> from pyubwebhook import server
+>>> from ubersmith_remote_module_server import server
 >>> class MyDeviceModule(object):
 ...   def hello(self, env):
 ...     return "world"
@@ -38,8 +38,3 @@ Example
 >>> s.run()
  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 
-
-TODOs
-=====
-
-* Callbacks (a.k.a. remote invocation of internal Ubersmith methods using the callback endpoint)
