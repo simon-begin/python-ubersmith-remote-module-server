@@ -12,11 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#!/usr/bin/env python
+from flask import Flask
 
-from setuptools import setup
+from ubersmith_remote_module_server import api, router
 
-setup(
-    setup_requires=['pbr'],
-    pbr=True,
-)
+class Server(object):
+    def __init__(self, modules):
+        self.router = router.Router(modules)
+        self.app = Flask(__name__)
+        self.api = api.Api(self.app, self.router)
+
+    def run(self, *args, **kwargs):
+        self.app.run(*args, **kwargs)

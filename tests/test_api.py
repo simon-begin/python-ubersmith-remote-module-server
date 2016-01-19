@@ -1,9 +1,24 @@
-import json
-import unittest
+# Copyright 2016 Internap
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from flask import Flask
 from hamcrest import assert_that, is_
+import json
 import mock
-from pyubwebhook.api import WebhookApi
+import unittest
+
+from ubersmith_remote_module_server.api import Api
 
 
 class ApiTest(unittest.TestCase):
@@ -12,7 +27,7 @@ class ApiTest(unittest.TestCase):
         self.api_client = self.app.test_client()
         self.router = mock.Mock()
 
-        self.api = WebhookApi(self.app, self.router)
+        self.api = Api(self.app, self.router)
 
     def test_list_implemented_methods(self):
         self.router.list_implemented_methods.return_value = ['abcd', 'efgh']

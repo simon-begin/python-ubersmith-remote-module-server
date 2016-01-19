@@ -1,4 +1,4 @@
-# Copyright 2015 Internap.
+# Copyright 2016 Internap
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest
 from hamcrest import is_, assert_that
 import mock
-from pyubwebhook.router import Router
+import unittest
+
+from ubersmith_remote_module_server.router import Router
 
 
 class Module3(object):
