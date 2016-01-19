@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/mat128/python-ubersmith-remote-module-server.svg?branch=master
-    :target: https://travis-ci.org/mat128/python-ubersmith-remote-module-server
+.. image:: https://travis-ci.org/internap/python-ubersmith-remote-module-server.svg?branch=master
+    :target: https://travis-ci.org/internap/python-ubersmith-remote-module-server
 
 ubersmith-remote-module-server
 ==============================
