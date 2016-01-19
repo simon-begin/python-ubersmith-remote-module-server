@@ -5,7 +5,6 @@ python:
   - "3.4"
 
 install:
-  - pip install wheel
   - pip install -r requirements.txt
   - pip install -r test-requirements.txt
 
@@ -19,5 +18,4 @@ deploy:
   on:
     tags: true
     python: 3.4
-    distributions: sdist bdist_wheel
     repo: internap/python-ubersmith-remote-module-server
