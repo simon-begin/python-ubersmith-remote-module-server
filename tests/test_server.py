@@ -34,8 +34,8 @@ class ServerTest(unittest.TestCase):
         s = server.Server(modules)
         s.run()
 
-        router_mock.assert_called_with(modules)
-        api_mock.assert_called_with(flask_instance, router_instance)
+        router_mock.assert_called_with()
+        api_mock.assert_called_with(modules, flask_instance, router_instance)
         flask_instance.run.assert_called_with()
 
     def test_run_passes_parameters_to_flask(self, api_mock, router_mock, flask_mock):
