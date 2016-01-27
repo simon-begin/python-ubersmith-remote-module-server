@@ -26,6 +26,12 @@ class Module3(object):
     def cd(self):
         pass
 
+    def _ef(self):
+        pass
+
+    def __gh(self):
+        pass
+
 
 class RouterTest(unittest.TestCase):
     def setUp(self):
