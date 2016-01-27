@@ -33,4 +33,4 @@ class Router(object):
 
     def list_implemented_methods(self, module_name):
         module = self.modules[module_name]
-        return [method for method in dir(module) if callable(getattr(module, method)) and not method.startswith('__')]
+        return [method for method in dir(module) if callable(getattr(module, method)) and not method.startswith('_')]
