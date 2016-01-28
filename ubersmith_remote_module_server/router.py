@@ -13,11 +13,10 @@
 # limitations under the License.
 
 class Router(object):
-    def __init__(self, modules, env_as_kwarg=True):
-        self.modules = modules
+    def __init__(self, env_as_kwarg=True):
         self.env_as_kwarg = env_as_kwarg
 
-    def invoke_method(self, module_name, method, params=None, env=None, callback=None):
+    def invoke_method(self, module, method, params=None, env=None, callback=None):
         if params is None:
             params = []
         if env is None:
@@ -28,9 +27,7 @@ class Router(object):
         else:
             additional_kwargs = {}
 
-        module = self.modules[module_name]
         return getattr(module, method)(*params, **additional_kwargs)
 
-    def list_implemented_methods(self, module_name):
-        module = self.modules[module_name]
+    def list_implemented_methods(self, module):
         return [method for method in dir(module) if callable(getattr(module, method)) and not method.startswith('_')]

@@ -14,25 +14,31 @@
 
 import json
 from flask import request, current_app
+import functools
 
 
 class Api(object):
-    def __init__(self, app, router):
+    def __init__(self, modules, app, router):
         self.app = app
         self.router = router
+        self.app.url_map.strict_slashes = False
 
-        app.add_url_rule('/<module_name>/', view_func=self.list_implemented_methods, methods=['GET'])
-        app.add_url_rule('/<module_name>/', view_func=self.handle_remote_invocation, methods=['POST'])
+        for module_name, module in modules.items():
+            list_endpoint = functools.partial(self.list_implemented_methods, module)
+            list_endpoint.__name__ = "list_" + module_name
+            app.add_url_rule('/{}'.format(module_name), view_func=list_endpoint, methods=['GET'])
 
+            handle_endpoint = functools.partial(self.handle_remote_invocation, module)
+            handle_endpoint.__name__ = "handle_" + module_name
+            app.add_url_rule('/{}'.format(module_name), view_func=handle_endpoint, methods=['POST'])
 
-    def list_implemented_methods(self, module_name):
-        return json_response({
-            'implemented_methods': self.router.list_implemented_methods(module_name)
-        }, 200)
+    def list_implemented_methods(self, module):
+        methods = self.router.list_implemented_methods(module)
+        return json_response({'implemented_methods': methods}, 200)
 
-    def handle_remote_invocation(self, module_name):
+    def handle_remote_invocation(self, module):
         data = request.get_json()
-        output = self.router.invoke_method(module_name=module_name, **data)
+        output = self.router.invoke_method(module=module, **data)
         return json_response(output, 200)
 
 def json_response(data, code):

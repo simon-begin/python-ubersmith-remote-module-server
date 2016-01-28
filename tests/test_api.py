@@ -26,14 +26,21 @@ class ApiTest(unittest.TestCase):
         self.app = Flask('test_app')
         self.api_client = self.app.test_client()
         self.router = mock.Mock()
+        self.module1 = mock.Mock()
+        self.module2 = mock.Mock()
+        self.modules = {'module1': self.module1,
+                        'module2': self.module2}
 
-        self.api = Api(self.app, self.router)
+        self.api = Api(self.modules, self.app, self.router)
+
+    def generate_module_path(self, module_name):
+        return '/{0}/'.format(module_name)
 
     def test_list_implemented_methods(self):
         self.router.list_implemented_methods.return_value = ['abcd', 'efgh']
 
-        output = self.api_client.get('/module1/')
-        self.router.list_implemented_methods.assert_called_with('module1')
+        output = self.api_client.get(self.generate_module_path('module1'))
+        self.router.list_implemented_methods.assert_called_with(self.module1)
 
         assert_that(json.loads(output.data.decode(output.charset)), is_({
             "implemented_methods": [
@@ -44,7 +51,7 @@ class ApiTest(unittest.TestCase):
 
     def test_execute_method_returns_string(self):
         self.router.invoke_method.return_value = 'simple string'
-        output = self.api_client.post('/module2/',
+        output = self.api_client.post(self.generate_module_path('module2'),
                                       headers={'Content-Type': 'application/json'},
                                       data=json.dumps(
             {
@@ -57,12 +64,12 @@ class ApiTest(unittest.TestCase):
             }
         ))
 
-        self.router.invoke_method.assert_called_with(module_name='module2', method='remote_method', params=[], env={'variable1': 'value1'}, callback={})
+        self.router.invoke_method.assert_called_with(module=self.module2, method='remote_method', params=[], env={'variable1': 'value1'}, callback={})
         assert_that(json.loads(output.data.decode(output.charset)), is_('simple string'))
 
     def test_execute_method_returns_list(self):
         self.router.invoke_method.return_value = ['a', 'b', 'c']
-        output = self.api_client.post('/module2/',
+        output = self.api_client.post(self.generate_module_path('module2'),
                                       headers={'Content-Type': 'application/json'},
                                       data=json.dumps(
             {
@@ -75,6 +82,30 @@ class ApiTest(unittest.TestCase):
             }
         ))
 
-        self.router.invoke_method.assert_called_with(module_name='module2', method='remote_method', params=[], env={'variable1': 'value1'}, callback={})
+        self.router.invoke_method.assert_called_with(module=self.module2, method='remote_method', params=[], env={'variable1': 'value1'}, callback={})
         assert_that(json.loads(output.data.decode(output.charset)), is_(['a', 'b', 'c']))
 
+    def test_invoking_unknown_module_returns_a_404(self):
+        output = self.api_client.post(self.generate_module_path('new_module'),
+                                      headers={'Content-Type': 'application/json'},
+                                      data=json.dumps(
+                                          {
+                                              "method": "remote_method",
+                                              "params": [],
+                                              "env": {
+                                                  "variable1": "value1"
+                                              },
+                                              "callback": {}
+                                          }
+                                      ))
+
+        assert_that(output.status_code, is_(404))
+
+    def test_listing_unknown_module_returns_a_404(self):
+        output = self.api_client.get(self.generate_module_path('new_module'))
+
+        assert_that(output.status_code, is_(404))
+
+class NoTrailingSlashApiTest(ApiTest):
+    def generate_module_path(self, module_name):
+        return '/{0}'.format(module_name)
