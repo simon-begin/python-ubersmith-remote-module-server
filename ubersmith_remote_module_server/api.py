@@ -21,15 +21,16 @@ class Api(object):
     def __init__(self, modules, app, router):
         self.app = app
         self.router = router
+        self.app.url_map.strict_slashes = False
 
         for module_name, module in modules.items():
             list_endpoint = functools.partial(self.list_implemented_methods, module)
             list_endpoint.__name__ = "list_" + module_name
-            app.add_url_rule('/{}/'.format(module_name), view_func=list_endpoint, methods=['GET'])
+            app.add_url_rule('/{}'.format(module_name), view_func=list_endpoint, methods=['GET'])
 
             handle_endpoint = functools.partial(self.handle_remote_invocation, module)
             handle_endpoint.__name__ = "handle_" + module_name
-            app.add_url_rule('/{}/'.format(module_name), view_func=handle_endpoint, methods=['POST'])
+            app.add_url_rule('/{}'.format(module_name), view_func=handle_endpoint, methods=['POST'])
 
     def list_implemented_methods(self, module):
         methods = self.router.list_implemented_methods(module)
