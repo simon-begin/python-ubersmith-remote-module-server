@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
-from flask import request, current_app
 import functools
+import json
+import logging
+
+from flask import request, current_app
 
 
 class Api(object):
@@ -33,10 +35,12 @@ class Api(object):
             app.add_url_rule('/{}'.format(module_name), view_func=handle_endpoint, methods=['POST'])
 
     def list_implemented_methods(self, module):
+        logging.debug("List implemented methods for {module}".format(module=module))
         methods = self.router.list_implemented_methods(module)
         return json_response({'implemented_methods': methods}, 200)
 
     def handle_remote_invocation(self, module):
+        logging.debug("Handle remote invocation for {module}".format(module=module))
         data = request.get_json()
         output = self.router.invoke_method(module=module, **data)
         return json_response(output, 200)
