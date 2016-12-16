@@ -1,4 +1,4 @@
-# Copyright 2015 Internap.
+# Copyright 2016 Internap.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,17 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from flexmock import flexmock
 
-
-def mock_ubersmith_client():
-    ubersmith_client = flexmock()
-    ubersmith_client.api = flexmock()
-    return ubersmith_client
-
-
-def mock_ubersmith_api():
-    ubersmith_api = flexmock()
-    ubersmith_api.device = flexmock()
-    ubersmith_api.client = flexmock()
-    return ubersmith_api
+class RequestContext(object):
+    def __init__(self, callback_url='', module_id='', device_id=None, service_id=None):
+        self.callback_url = callback_url
+        self.module_id = module_id
+        self.device_id = device_id
+        self.service_id = service_id

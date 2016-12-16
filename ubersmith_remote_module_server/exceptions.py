@@ -1,4 +1,4 @@
-# Copyright 2015 Internap.
+# Copyright 2016 Internap.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,17 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from flexmock import flexmock
+
+class NoRequestContext(Exception):
+    def __init__(self, msg="UbersmithCore was called without a context, "
+                           "you can't save this object"):
+        super(NoRequestContext, self).__init__(msg)
 
 
-def mock_ubersmith_client():
-    ubersmith_client = flexmock()
-    ubersmith_client.api = flexmock()
-    return ubersmith_client
-
-
-def mock_ubersmith_api():
-    ubersmith_api = flexmock()
-    ubersmith_api.device = flexmock()
-    ubersmith_api.client = flexmock()
-    return ubersmith_api
+class NamedArgumentsOnly(Exception):
+    def __init__(self, msg="UbersmithCore was called with non-named arguments, "
+                           "you MUST use named arguments (kwargs)"):
+        super(NamedArgumentsOnly, self).__init__(msg)
