@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ubersmith_remote_module_server.objects import RequestContext
+from ubersmith_remote_module_server.ubersmith_core import ConfiguredRequestContext
+
+
 class Router(object):
     def __init__(self, env_as_kwarg=True):
         self.env_as_kwarg = env_as_kwarg
@@ -27,7 +31,16 @@ class Router(object):
         else:
             additional_kwargs = {}
 
-        return getattr(module, method)(*params, **additional_kwargs)
+        with ConfiguredRequestContext(context=self._build_request_context(callback)):
+            return getattr(module, method)(*params, **additional_kwargs)
+
+    def _build_request_context(self, callback):
+        callback = callback or {}
+        params = callback.get('params', {})
+        return RequestContext(callback_url=callback.get('url'),
+                              module_id=params.get('module_id'),
+                              device_id=params.get('device_id'),
+                              service_id=params.get('service_id'))
 
     def list_implemented_methods(self, module):
         return [method for method in dir(module) if callable(getattr(module, method)) and not method.startswith('_')]
