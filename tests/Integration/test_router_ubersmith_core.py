@@ -17,15 +17,15 @@ import unittest
 from flexmock import flexmock, flexmock_teardown
 
 from . import ContextMatcher
-from ubersmith_remote_module_server import ubersmith_core
+from ubersmith_remote_module_server import remote
 from ubersmith_remote_module_server.objects import RequestContext
 from ubersmith_remote_module_server.router import Router
-from ubersmith_remote_module_server.ubersmith_core import UbersmithCore
+from ubersmith_remote_module_server.remote import ubersmith
 
 
 class FakeModule(object):
     def call_uber_core(self):
-        UbersmithCore.test()
+        ubersmith.test()
 
 
 class RouterUbersmithCoreTest(unittest.TestCase):
@@ -33,7 +33,7 @@ class RouterUbersmithCoreTest(unittest.TestCase):
         fake_module = FakeModule()
         remote_executor_mock = flexmock()
 
-        flexmock(ubersmith_core).should_receive('RemoteExecutor').\
+        flexmock(remote).should_receive('RemoteExecutor').\
             with_args(context=RequestContext).and_return(remote_executor_mock)
 
         remote_executor_mock.should_receive('invoke_global').with_args('test', args={}).once()
@@ -49,7 +49,7 @@ class RouterUbersmithCoreTest(unittest.TestCase):
                             'url': 'http://user:pass@ubersmith.example/'
                                    'api/2.0/?method=service.module_call'}
 
-        flexmock(ubersmith_core).should_receive('RemoteExecutor'). \
+        flexmock(remote).should_receive('RemoteExecutor'). \
             with_args(context=ContextMatcher(callback_url=example_callback['url'],
                                              module_id='44',
                                              service_id='1260'))\
@@ -70,7 +70,7 @@ class RouterUbersmithCoreTest(unittest.TestCase):
                                    'api/2.0/?method=device.module_call'}
 
         remote_executor_mock = flexmock()
-        flexmock(ubersmith_core).should_receive('RemoteExecutor'). \
+        flexmock(remote).should_receive('RemoteExecutor'). \
             with_args(context=ContextMatcher(callback_url=example_callback['url'],
                                              module_id='173',
                                              device_id='200025'))\

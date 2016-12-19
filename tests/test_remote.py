@@ -1,4 +1,4 @@
-# Copyright 2016 Internap.
+# Copyright 2016 Internap
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,10 +16,39 @@ import unittest
 
 from flexmock import flexmock, flexmock_teardown
 
-from ubersmith_remote_module_server import _remote_executor
-from ubersmith_remote_module_server._remote_executor import RemoteExecutor
+from tests import mock_ubersmith_client, mock_ubersmith_api
+from ubersmith_remote_module_server import remote
+from ubersmith_remote_module_server.exceptions import NoRequestContext, NamedArgumentsOnly
 from ubersmith_remote_module_server.objects import RequestContext
-from . import mock_ubersmith_client, mock_ubersmith_api
+from ubersmith_remote_module_server.remote import RemoteExecutor, ubersmith, \
+    ConfiguredRequestContext
+
+
+class UbersmithCoreTest(unittest.TestCase):
+    def test_raises_when_out_of_context(self):
+        remote_executor_mock = flexmock()
+        flexmock(remote).should_receive('RemoteExecutor').and_return(remote_executor_mock)
+        with self.assertRaises(NoRequestContext):
+            ubersmith.test()
+
+    def test_raises_when_args(self):
+        remote_executor_mock = flexmock()
+        flexmock(remote).should_receive('RemoteExecutor').and_return(remote_executor_mock)
+        with self.assertRaises(NamedArgumentsOnly):
+            ubersmith.test('hello')
+
+    def test_calls_executor_with_context_when_called(self):
+        remote_executor_mock = flexmock()
+        flexmock(remote).should_receive('RemoteExecutor'). \
+            with_args(context='context').and_return(remote_executor_mock).once()
+        remote_executor_mock.should_receive('invoke_global').with_args('test', args={}).once()
+
+        with ConfiguredRequestContext(context='context'):
+            ubersmith.test()
+
+    def tearDown(self):
+        flexmock_teardown()
+        super(UbersmithCoreTest, self).tearDown()
 
 
 class RemoteExecutorTest(unittest.TestCase):
@@ -27,7 +56,7 @@ class RemoteExecutorTest(unittest.TestCase):
         ubersmith_client = mock_ubersmith_client()
         ubersmith_api = mock_ubersmith_api()
 
-        flexmock(_remote_executor).should_receive('ubersmith_client').and_return(ubersmith_client)
+        flexmock(remote).should_receive('ubersmith_client').and_return(ubersmith_client)
 
         ubersmith_client.api.should_receive('init')\
             .with_args(url='http://ubersmith.example/url',
@@ -50,7 +79,7 @@ class RemoteExecutorTest(unittest.TestCase):
         ubersmith_client = mock_ubersmith_client()
         ubersmith_api = mock_ubersmith_api()
 
-        flexmock(_remote_executor).should_receive('ubersmith_client').and_return(ubersmith_client)
+        flexmock(remote).should_receive('ubersmith_client').and_return(ubersmith_client)
 
         ubersmith_client.api.should_receive('init')\
             .with_args(url='http://ubersmith.example/url',
@@ -74,5 +103,3 @@ class RemoteExecutorTest(unittest.TestCase):
     def tearDown(self):
         flexmock_teardown()
         super(RemoteExecutorTest, self).tearDown()
-
-
