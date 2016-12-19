@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from ubersmith_remote_module_server.objects import RequestContext
-from ubersmith_remote_module_server.ubersmith_core import ConfiguredRequestContext
+from ubersmith_remote_module_server.remote import ConfiguredRequestContext
 
 
 class Router(object):

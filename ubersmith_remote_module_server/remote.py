@@ -15,6 +15,41 @@
 import ubersmith_client
 from six.moves.urllib.parse import urlparse
 
+from ubersmith_remote_module_server.exceptions import NoRequestContext, NamedArgumentsOnly
+
+_configuration = None
+
+__all__ = ['ubersmith']
+
+
+class ConfiguredRequestContext(object):
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs or {}
+
+    def __enter__(self):
+        global _configuration
+        _configuration = self.kwargs
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        global _configuration
+        _configuration = None
+
+
+class UbersmithRemoteProxy(object):
+    def _invoke_method(self, name, *args, **kwargs):
+        global _configuration
+        if args:
+            raise NamedArgumentsOnly()
+        if _configuration is None:
+            raise NoRequestContext()
+        executor = RemoteExecutor(**_configuration)
+        executor.invoke_global(name, args=kwargs)
+
+    def __getattr__(self, func_name):
+        def invoke_without_name(*args, **kwargs):
+            return self._invoke_method(func_name, *args, **kwargs)
+        return invoke_without_name
+
 
 class RemoteExecutor(object):
     def __init__(self, context):
@@ -36,3 +71,5 @@ class RemoteExecutor(object):
                                                      module_id=self.context.module_id,
                                                      function='_web_hook_invoke_global',
                                                      module_params=[func_name, [args]])
+
+ubersmith = UbersmithRemoteProxy()
