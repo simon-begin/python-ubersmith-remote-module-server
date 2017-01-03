@@ -37,6 +37,8 @@ class Router(object):
     def _build_request_context(self, callback):
         callback = callback or {}
         params = callback.get('params', {})
+        if isinstance(params, list):
+            params = dict()
         return RequestContext(callback_url=callback.get('url'),
                               module_id=params.get('module_id'),
                               device_id=params.get('device_id'),

@@ -72,3 +72,7 @@ class RouterTest(unittest.TestCase):
     def test_accept_callback_as_kwarg(self):
         self.router.invoke_method(module=self.module1, method='hello', params=[], env={},
                                   callback={'url': 'http://example.net', 'params': {'k1': 'v1', 'k2': 'v2'}})
+
+    def test_callback_has_empty_params_list(self):
+        self.router.invoke_method(module=self.module1, method='hello', params=[], env={},
+                                  callback={'url': 'http://example.net', 'params': []})
