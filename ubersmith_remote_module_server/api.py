@@ -35,7 +35,6 @@ class Api(object):
             app.add_url_rule('/{}'.format(module_name), view_func=handle_endpoint, methods=['POST'])
 
     def list_implemented_methods(self, module):
-        logging.debug("List implemented methods for {module}".format(module=module))
         methods = self.router.list_implemented_methods(module)
         return json_response({'implemented_methods': methods}, 200)
 
