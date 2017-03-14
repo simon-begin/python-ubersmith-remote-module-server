@@ -17,6 +17,7 @@ import json
 import logging
 
 from flask import request, current_app
+from ubersmith_remote_module_server.exceptions import RemoteModuleException
 
 
 class Api(object):
@@ -44,7 +45,8 @@ class Api(object):
         try:
             output = self.router.invoke_method(module=module, **data)
             return json_response(output, 200)
-        except Exception as e:
+        except RemoteModuleException as e:
+            logging.exception(e)
             return json_response(str(e), 500)
 
 

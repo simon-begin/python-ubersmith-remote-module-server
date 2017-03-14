@@ -19,6 +19,7 @@ import mock
 import unittest
 
 from ubersmith_remote_module_server.api import Api
+from ubersmith_remote_module_server.exceptions import RemoteModuleException
 
 
 class ApiTest(unittest.TestCase):
@@ -69,7 +70,7 @@ class ApiTest(unittest.TestCase):
         assert_that(output.status_code, is_(200))
 
     def test_execute_method_raise_an_exception(self):
-        self.router.invoke_method.side_effect = Exception('Some Error')
+        self.router.invoke_method.side_effect = RemoteModuleException('Some Error')
         output = self.api_client.post(self.generate_module_path('module2'),
                                       headers={'Content-Type': 'application/json'},
                                       data=json.dumps(
