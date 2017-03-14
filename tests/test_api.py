@@ -66,6 +66,26 @@ class ApiTest(unittest.TestCase):
 
         self.router.invoke_method.assert_called_with(module=self.module2, method='remote_method', params=[], env={'variable1': 'value1'}, callback={})
         assert_that(json.loads(output.data.decode(output.charset)), is_('simple string'))
+        assert_that(output.status_code, is_(200))
+
+    def test_execute_method_raise_an_exception(self):
+        self.router.invoke_method.side_effect = Exception('Some Error')
+        output = self.api_client.post(self.generate_module_path('module2'),
+                                      headers={'Content-Type': 'application/json'},
+                                      data=json.dumps(
+                                              {
+                                                  "method": "remote_method",
+                                                  "params": [],
+                                                  "env": {
+                                                      "variable1": "value1"
+                                                  },
+                                                  "callback": {}
+                                              }
+                                      ))
+
+        self.router.invoke_method.assert_called_with(module=self.module2, method='remote_method', params=[], env={'variable1': 'value1'}, callback={})
+        assert_that(json.loads(output.data.decode(output.charset)), is_('Some Error'))
+        assert_that(output.status_code, is_(500))
 
     def test_execute_method_returns_list(self):
         self.router.invoke_method.return_value = ['a', 'b', 'c']
@@ -84,6 +104,7 @@ class ApiTest(unittest.TestCase):
 
         self.router.invoke_method.assert_called_with(module=self.module2, method='remote_method', params=[], env={'variable1': 'value1'}, callback={})
         assert_that(json.loads(output.data.decode(output.charset)), is_(['a', 'b', 'c']))
+        assert_that(output.status_code, is_(200))
 
     def test_invoking_unknown_module_returns_a_404(self):
         output = self.api_client.post(self.generate_module_path('new_module'),
@@ -105,6 +126,7 @@ class ApiTest(unittest.TestCase):
         output = self.api_client.get(self.generate_module_path('new_module'))
 
         assert_that(output.status_code, is_(404))
+
 
 class NoTrailingSlashApiTest(ApiTest):
     def generate_module_path(self, module_name):
