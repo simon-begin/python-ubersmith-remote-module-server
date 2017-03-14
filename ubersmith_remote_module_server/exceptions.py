@@ -23,3 +23,7 @@ class NamedArgumentsOnly(Exception):
     def __init__(self, msg="UbersmithCore was called with non-named arguments, "
                            "you MUST use named arguments (kwargs)"):
         super(NamedArgumentsOnly, self).__init__(msg)
+
+
+class RemoteModuleException(Exception):
+    pass

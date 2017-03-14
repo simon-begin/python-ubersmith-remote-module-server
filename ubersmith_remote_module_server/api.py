@@ -17,6 +17,7 @@ import json
 import logging
 
 from flask import request, current_app
+from ubersmith_remote_module_server.exceptions import RemoteModuleException
 
 
 class Api(object):
@@ -41,8 +42,13 @@ class Api(object):
     def handle_remote_invocation(self, module):
         logging.debug("Handle remote invocation for {module}".format(module=module))
         data = request.get_json()
-        output = self.router.invoke_method(module=module, **data)
-        return json_response(output, 200)
+        try:
+            output = self.router.invoke_method(module=module, **data)
+            return json_response(output, 200)
+        except RemoteModuleException as e:
+            logging.exception(e)
+            return json_response(str(e), 500)
+
 
 def json_response(data, code):
     json_data = json.dumps(data, indent=None)
