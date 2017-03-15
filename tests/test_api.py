@@ -65,7 +65,8 @@ class ApiTest(unittest.TestCase):
             }
         ))
 
-        self.router.invoke_method.assert_called_with(module=self.module2, method='remote_method', params=[], env={'variable1': 'value1'}, callback={})
+        self.router.invoke_method.assert_called_with(module=self.module2, method='remote_method', params=[],
+                                                     env={'variable1': 'value1'}, callback={})
         assert_that(json.loads(output.data.decode(output.charset)), is_('simple string'))
         assert_that(output.status_code, is_(200))
 
@@ -84,7 +85,8 @@ class ApiTest(unittest.TestCase):
                                               }
                                       ))
 
-        self.router.invoke_method.assert_called_with(module=self.module2, method='remote_method', params=[], env={'variable1': 'value1'}, callback={})
+        self.router.invoke_method.assert_called_with(module=self.module2, method='remote_method', params=[],
+                                                     env={'variable1': 'value1'}, callback={})
         assert_that(json.loads(output.data.decode(output.charset)), is_('Some Error'))
         assert_that(output.status_code, is_(500))
 
@@ -103,7 +105,8 @@ class ApiTest(unittest.TestCase):
             }
         ))
 
-        self.router.invoke_method.assert_called_with(module=self.module2, method='remote_method', params=[], env={'variable1': 'value1'}, callback={})
+        self.router.invoke_method.assert_called_with(module=self.module2, method='remote_method', params=[],
+                                                     env={'variable1': 'value1'}, callback={})
         assert_that(json.loads(output.data.decode(output.charset)), is_(['a', 'b', 'c']))
         assert_that(output.status_code, is_(200))
 
