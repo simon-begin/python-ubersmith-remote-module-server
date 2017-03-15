@@ -22,6 +22,7 @@ class TestModule(object):
     def hello(self):
         return "world"
 
+
 @mock.patch('ubersmith_remote_module_server.server.Flask')
 @mock.patch('ubersmith_remote_module_server.server.router.Router')
 @mock.patch('ubersmith_remote_module_server.server.api.Api')

@@ -16,6 +16,7 @@ from flask import Flask
 
 from ubersmith_remote_module_server import api, router
 
+
 class Server(object):
     def __init__(self, modules):
         self.router = router.Router()
