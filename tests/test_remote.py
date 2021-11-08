@@ -14,7 +14,12 @@
 
 import unittest
 
-from flexmock import flexmock, flexmock_teardown
+from flexmock import flexmock
+
+try:
+    from flexmock._api import flexmock_teardown
+except ImportError:
+    from flexmock import flexmock_teardown
 
 from tests import mock_ubersmith_client, mock_ubersmith_api
 from ubersmith_remote_module_server import remote
